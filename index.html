@@ -34,7 +34,7 @@
         <h2>
 <a id="wtf-is-this" class="anchor" href="#wtf-is-this" aria-hidden="true"><span class="octicon octicon-link"></span></a>wtf is this?</h2>
 
-<p>This is my personal "API", or extension of OSBot's normal API. It has a few extra features, namely:</p>
+<p>This is my personal "API", or extension of OSBot's normal API (as a note I use Framework/API interchangeably in this document.) It has a few extra features, namely:</p>
 
 <ul>
 <li>Web Walker</li>
@@ -42,26 +42,63 @@
 <li>Encourages reusable, configurable code</li>
 <li>Helper functions to make life easier</li>
 <li>No more filters, just Lambda goodness!</li>
+<li>Probably some stuff I forgot about (lol)</li>
 </ul>
+
+<h2>
+<a id="before-you-get-going" class="anchor" href="#before-you-get-going" aria-hidden="true"><span class="octicon octicon-link"></span></a>Before you get going...</h2>
+
+<p>If you are planning on using the "lemons" API, great! Make sure to report bugs ASAP, I will work on a fix right away! Contact me at:</p>
+
+<p>Skype: <a href="mailto:admin@gfxtub.com">admin@gfxtub.com</a>
+Steam: dudeami</p>
+
+<p>Feel free to ask me anything you want, anytime, for any reason. If I don't answer, its probably because I don't sit at the computer all day :p I'll get with you ASAP though!</p>
+
+<p>Please leave some info so I know why I want to add you, thanks!</p>
 
 <h2>
 <a id="so-its-just-a-few-extra-methods" class="anchor" href="#so-its-just-a-few-extra-methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>So, its just a few extra methods?</h2>
 
 <p>Not at all, it restructures how your scripts are written without actually making it much different. For a hands-on guide, go to the "So, how do I get started?" section below. This section will talk about how scripts are structured.</p>
 
-<p>Lets say you have a simple goblin killer script. At the moment it can find a goblin in the loaded region, then can interact with it. But, you want to add a few more features like Death Walk, Banking, and what not. Normally, you would just start writing some functions/cases/states/nodes/whatever in your script, and have those features. But what happens next time you need those features?</p>
+<h3>
+<a id="an-example-of-using-the-api-and-why-it-benefits-you" class="anchor" href="#an-example-of-using-the-api-and-why-it-benefits-you" aria-hidden="true"><span class="octicon octicon-link"></span></a>An example of using the API, and why it benefits you</h3>
+
+<p>Lets say you have a simple goblin killer script. At the moment it can find a goblin in the loaded region, then can interact with it. But, you want to add a few more features like Death walk, Re-equipping items, and Banking. Normally, you would just start writing some functions/cases/states/nodes/whatever in your script, and have those features. But what happens next time you need those features?</p>
 
 <p>This API aims to solve this issue by introducing a "Task". The system somewhat resembles a "Node" setup, but with some improvements:</p>
 
 <ul>
-<li>Tasks are actually mini-scripts, no need to do <code>script.getWhatever()</code>
+<li>Tasks are actually mini-scripts, no need to do <code>script.getWhatever()</code>, just do <code>getWhatever()</code>
 </li>
 <li>Tasks can be grouped together to make ComplexTasks</li>
 <li>Tasks can be given default conditions, and addition conditions can be added.</li>
+<li>Tasks can be made to accept configuration, making them robust and reusable.</li>
 </ul>
 
+<h3>
+<a id="structuring-your-script" class="anchor" href="#structuring-your-script" aria-hidden="true"><span class="octicon octicon-link"></span></a>Structuring your script</h3>
+
+<p>Now, the API doesn't magically do this for you. It just allows you to setup your code in a more structured way without worrying about supporting that structure. So for the goblin script, here is an example tree:</p>
+
+<pre><code>|-GoblinKiller.java
+|-tasks *(folder)*
+|---AttackGoblinTask.java
+|---WalkToGoblinTask.java
+</code></pre>
+
+<p>But wait, aren't we missing a few "Tasks"? Such as Banking, Equipping, Picking up of items, etc? Well, thanks to the system there is no need to rewrite these, as they are available from the API.</p>
+
+<h3>
+<a id="setting-up-the-goblinkillerjava-file" class="anchor" href="#setting-up-the-goblinkillerjava-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setting up the "GoblinKiller.java" file</h3>
+
+<p>This file is what we call the "Controller". It basically determines the flow of the application. This almost reads like a list for simple programs, though will mainly be where configuration happens and determines the flow of your script. To see what this looks like, go to the next section!</p>
+
 <h2>
-<a id="so-how-do-i-get-started" class="anchor" href="#so-how-do-i-get-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>So, how do I get started?</h2>
+<a id="so-how-about-some-real-code" class="anchor" href="#so-how-about-some-real-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>So, how about some real code?</h2>
+
+<p>Yep, real code time. Going off the example above, we need to make 2 new "Tasks" (one of which is going to use an existing class), and one "Controller" class. Here are those 3 classes, well documented:</p>
       </section>
     </div>
 
