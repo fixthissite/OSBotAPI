@@ -85,10 +85,9 @@ Steam: dudeami</p>
 <pre><code>|-GoblinKiller.java
 |-tasks *(folder)*
 |---AttackGoblinTask.java
-|---WalkToGoblinTask.java
 </code></pre>
 
-<p>But wait, aren't we missing a few "Tasks"? Such as Banking, Equipping, Picking up of items, etc? Well, thanks to the system there is no need to rewrite these, as they are available from the API.</p>
+<p>But wait, aren't we missing a few "Tasks"? Such as Walking, Banking, Equipping, Picking up of items, etc? Well, thanks to the system there is no need to rewrite these, as they are available from the API.</p>
 
 <h3>
 <a id="setting-up-the-goblinkillerjava-file" class="anchor" href="#setting-up-the-goblinkillerjava-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setting up the "GoblinKiller.java" file</h3>
@@ -98,7 +97,128 @@ Steam: dudeami</p>
 <h2>
 <a id="so-how-about-some-real-code" class="anchor" href="#so-how-about-some-real-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>So, how about some real code?</h2>
 
-<p>Yep, real code time. Going off the example above, we need to make 2 new "Tasks" (one of which is going to use an existing class), and one "Controller" class. Here are those 3 classes, well documented:</p>
+<p>Yep, real code time. Going off the example above, we need to make 1 new "Task", and one "Controller" class. Here are those 2 classes, well documented:</p>
+
+<h3>
+<a id="goblinkillerjava" class="anchor" href="#goblinkillerjava" aria-hidden="true"><span class="octicon octicon-link"></span></a>GoblinKiller.java</h3>
+
+<div class="highlight highlight-java"><pre><span class="pl-k">import</span> <span class="pl-smi">org.osbot.rs07.api.map.Position</span>;
+<span class="pl-k">import</span> <span class="pl-smi">org.osbot.rs07.api.ui.EquipmentSlot</span>;
+
+<span class="pl-k">import</span> <span class="pl-smi">lemons.api.script.TaskScript</span>;
+<span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.PickupTask</span>;
+<span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.WalkingTask</span>;
+<span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.banking.BankTask</span>;
+<span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.banking.EquipmentReq</span>;
+<span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.banking.EquipmentReqTask</span>;
+<span class="pl-k">import</span> <span class="pl-smi">lemons.api.walking.map.Zone</span>;
+
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">GoblinKiller</span> <span class="pl-k">extends</span> <span class="pl-e">TaskScript</span> {
+
+    <span class="pl-c">// NOTE: You can NOT set variables like this, as the OSBot API is not available yet</span>
+    <span class="pl-k">public</span> <span class="pl-k">boolean</span> willNotWork <span class="pl-k">=</span> getInventory()<span class="pl-k">.</span>contains(<span class="pl-s"><span class="pl-pds">"</span>nothing<span class="pl-pds">"</span></span>);
+
+    <span class="pl-k">public</span> <span class="pl-en">GoblinKiller</span>() {
+        <span class="pl-c">// Note you can NOT use the OSBot API here either</span>
+    }
+
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onStart</span>() {
+        <span class="pl-c">// OSBot API is available, do stuff!</span>
+
+        <span class="pl-c">// Make sure we run this, this initializes the lemons API</span>
+        <span class="pl-v">super</span><span class="pl-k">.</span>onStart();
+
+        <span class="pl-c">// So, lets setup equipment handling</span>
+        <span class="pl-c">// Note this is also a BankTask, so no need to add one of those!</span>
+        addTask(<span class="pl-k">new</span> <span class="pl-smi">EquipmentReqTask</span>()
+            <span class="pl-c">// So, lets add the weapon requirement of "Bronze sword"</span>
+            .addReq(<span class="pl-smi">EquipmentSlot</span><span class="pl-c1"><span class="pl-k">.</span>WEAPON</span>,
+                <span class="pl-c">// First false = not required, second = don't go bank</span>
+                <span class="pl-c">// for immediately</span>
+                <span class="pl-k">new</span> <span class="pl-smi">EquipmentReq</span>(<span class="pl-c1">false</span>, <span class="pl-c1">false</span>)
+                    <span class="pl-c">// Finally, add the Bronze sword to this req,</span>
+                    <span class="pl-c">// note you can chain addItem for multiple items.</span>
+                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Bronze sword<span class="pl-pds">"</span></span>))
+            <span class="pl-c">// Same thing, but for shields</span>
+            .addReq(<span class="pl-smi">EquipmentSlot</span><span class="pl-c1"><span class="pl-k">.</span>SHIELD</span>,
+                <span class="pl-k">new</span> <span class="pl-smi">EquipmentReq</span>(<span class="pl-c1">false</span>, <span class="pl-c1">false</span>)
+                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Wooden shield<span class="pl-pds">"</span></span>))
+        );
+
+        <span class="pl-c">// Lets add walking back to the the goblin killer area</span>
+        addTask(<span class="pl-k">new</span> <span class="pl-smi">WalkingTask</span>(
+                <span class="pl-c">// Since OSBots Areas are pretty low-level, we use custom</span>
+                <span class="pl-c">// "Zones". Note zones must be passed the script, use "this"</span>
+                <span class="pl-c">// inside "TaskScript" and getScript() elsewhere.</span>
+                <span class="pl-k">new</span> <span class="pl-smi">Zone</span>(<span class="pl-v">this</span>)
+                    .rect(<span class="pl-k">new</span> <span class="pl-smi">Position</span>(<span class="pl-c1">3242</span>, <span class="pl-c1">3222</span>, <span class="pl-c1">0</span>), <span class="pl-k">new</span> <span class="pl-smi">Position</span>(<span class="pl-c1">3268</span>, <span class="pl-c1">3270</span>, <span class="pl-c1">0</span>))));
+
+        <span class="pl-c">// Lets add pickup task, since we want that before attacking. Note this pickup</span>
+        <span class="pl-c">// task will be pretty permissive, and will go for almost anything in the area.</span>
+
+        addTask(<span class="pl-k">new</span> <span class="pl-smi">PickupTask</span>()<span class="pl-k">.</span>addItem(<span class="pl-s"><span class="pl-pds">"</span>Coins<span class="pl-pds">"</span></span>));
+
+        <span class="pl-c">// Finally, add our "AttackGoblinTask"</span>
+        addTask(<span class="pl-k">new</span> <span class="pl-smi">AttackGoblinTask</span>());
+    }
+
+}</pre></div>
+
+<h3>
+<a id="attackgoblintaskjava" class="anchor" href="#attackgoblintaskjava" aria-hidden="true"><span class="octicon octicon-link"></span></a>AttackGoblinTask.java</h3>
+
+<div class="highlight highlight-java"><pre><span class="pl-k">import</span> <span class="pl-smi">lemons.api.script.entities.NPC</span>;
+<span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.templates.AbstractTask</span>;
+
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">AttackGoblinTask</span> <span class="pl-k">extends</span> <span class="pl-e">AbstractTask</span> {
+
+    <span class="pl-c">// Define a holder for our goblin</span>
+    <span class="pl-k">private</span> <span class="pl-c1">NPC</span> gob;
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">run</span>() {
+        <span class="pl-c">// Get our goblin using our neat function :p</span>
+        gob <span class="pl-k">=</span> getGoblin();
+
+
+        <span class="pl-k">if</span> (gob <span class="pl-k">==</span> <span class="pl-c1">null</span>) {
+            <span class="pl-c">// Uhh oh, no goblin! Wait until we got one...</span>
+            error(<span class="pl-s"><span class="pl-pds">"</span>No goblin was detected! Sleeping...<span class="pl-pds">"</span></span>);
+            sleep(<span class="pl-c1">1000</span>, <span class="pl-c1">2000</span>);
+            <span class="pl-k">return</span>;
+        }
+
+        <span class="pl-k">if</span> (gob<span class="pl-k">.</span>interact(<span class="pl-s"><span class="pl-pds">"</span>Attack<span class="pl-pds">"</span></span>)) {
+            <span class="pl-c">// No issues attacking goblin, wait until the task isn't active anymore</span>
+            info(<span class="pl-s"><span class="pl-pds">"</span>Attacked goblin at <span class="pl-pds">"</span></span><span class="pl-k">+</span>tile(gob)<span class="pl-k">.</span>toString());
+            <span class="pl-c">// Dynamic sleeps, with awseome lambda goodness!</span>
+            sleep(<span class="pl-c1">2000</span>, () <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-k">!</span>isActive());
+        }
+    }
+
+    <span class="pl-k">public</span> <span class="pl-smi">NPC</span> <span class="pl-en">getGoblin</span>() {
+        <span class="pl-c">// Simple returns the closest goblin which isn't under attack</span>
+        <span class="pl-c">// This can be improved on</span>
+        <span class="pl-k">return</span> getNpcs()<span class="pl-k">.</span>closest(o <span class="pl-k">-</span><span class="pl-k">&gt;</span> o<span class="pl-k">.</span>hasName(<span class="pl-s"><span class="pl-pds">"</span>Goblin<span class="pl-pds">"</span></span>)
+                    <span class="pl-k">&amp;&amp;</span> <span class="pl-k">!</span>o<span class="pl-k">.</span>isUnderAttack());
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">boolean</span> <span class="pl-en">isActive</span>() {
+        <span class="pl-c">// Only try and attack if we have noone to interact with,</span>
+        <span class="pl-c">// or are interacting with something thats dead</span>
+        <span class="pl-k">return</span> myPlayer()<span class="pl-k">.</span>getInteracting() <span class="pl-k">==</span> <span class="pl-c1">null</span> <span class="pl-k">||</span>
+                myPlayer()<span class="pl-k">.</span>getInteracting()<span class="pl-k">.</span>getHealth() <span class="pl-k">==</span> <span class="pl-c1">0</span>;
+    }
+
+}</pre></div>
+
+<h2>
+<a id="so-wheres-the-documentation" class="anchor" href="#so-wheres-the-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>So, wheres the documentation?</h2>
+
+<p>That will be coming soon ^^ If you need help in the mean time, contact me using the section above (has my Skype/Steam messanger handles)</p>
       </section>
     </div>
 
