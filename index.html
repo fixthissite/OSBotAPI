@@ -90,8 +90,7 @@ Steam: dudeami</p>
 <p>Now, the API doesn't magically do this for you. It just allows you to setup your code in a more structured way without worrying about supporting that structure. So for the goblin script, here is an example tree:</p>
 
 <pre><code>|-GoblinKiller.java
-|-tasks *(folder)*
-|---AttackGoblinTask.java
+|-AttackGoblinTask.java
 </code></pre>
 
 <p>But wait, aren't we missing a few "Tasks"? Such as Walking, Banking, Equipping, Picking up of items, etc? Well, thanks to the system there is no need to rewrite these, as they are available from the API.</p>
@@ -115,7 +114,6 @@ Steam: dudeami</p>
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.script.TaskScript</span>;
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.PickupTask</span>;
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.WalkingTask</span>;
-<span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.banking.BankTask</span>;
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.banking.EquipmentReq</span>;
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.banking.EquipmentReqTask</span>;
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.walking.map.Zone</span>;
