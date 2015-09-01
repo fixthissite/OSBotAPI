@@ -65,165 +65,201 @@ Steam: dudeami</p>
 <p>Please leave some info so I know why I want to add you, thanks!</p>
 
 <h2>
-<a id="so-its-just-a-few-extra-methods" class="anchor" href="#so-its-just-a-few-extra-methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>So, its just a few extra methods?</h2>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h2>
 
-<p>Not at all, it restructures how your scripts are written without actually making it much different. For a hands-on guide, go to the "So, how do I get started?" section below. This section will talk about how scripts are structured.</p>
-
-<h3>
-<a id="an-example-of-using-the-api-and-why-it-benefits-you" class="anchor" href="#an-example-of-using-the-api-and-why-it-benefits-you" aria-hidden="true"><span class="octicon octicon-link"></span></a>An example of using the API, and why it benefits you</h3>
-
-<p>Lets say you have a simple goblin killer script. At the moment it can find a goblin in the loaded region, then can interact with it. But, you want to add a few more features like Death walk, Re-equipping items, and Banking. Normally, you would just start writing some functions/cases/states/nodes/whatever in your script, and have those features. But what happens next time you need those features?</p>
-
-<p>This API aims to solve this issue by introducing a "Task". The system somewhat resembles a "Node" setup, but with some improvements:</p>
-
-<ul>
-<li>Tasks are actually mini-scripts, no need to do <code>script.getWhatever()</code>, just do <code>getWhatever()</code>
-</li>
-<li>Tasks can be grouped together to make ComplexTasks</li>
-<li>Tasks can be given default conditions, and addition conditions can be added.</li>
-<li>Tasks can be made to accept configuration, making them robust and reusable.</li>
-</ul>
-
-<h3>
-<a id="structuring-your-script" class="anchor" href="#structuring-your-script" aria-hidden="true"><span class="octicon octicon-link"></span></a>Structuring your script</h3>
-
-<p>Now, the API doesn't magically do this for you. It just allows you to setup your code in a more structured way without worrying about supporting that structure. So for the goblin script, here is an example tree:</p>
-
-<pre><code>|-GoblinKiller.java
-|-AttackGoblinTask.java
-</code></pre>
-
-<p>But wait, aren't we missing a few "Tasks"? Such as Walking, Banking, Equipping, Picking up of items, etc? Well, thanks to the system there is no need to rewrite these, as they are available from the API.</p>
-
-<h3>
-<a id="setting-up-the-goblinkillerjava-file" class="anchor" href="#setting-up-the-goblinkillerjava-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setting up the "GoblinKiller.java" file</h3>
-
-<p>This file is what we call the "Controller". It basically determines the flow of the application. This almost reads like a list for simple programs, though will mainly be where configuration happens and determines the flow of your script. To see what this looks like, go to the next section!</p>
+<p><a href="https://github.com/Lem0ns/OSBotAPI/wiki">Go to documentation</a></p>
 
 <h2>
-<a id="so-how-about-some-real-code" class="anchor" href="#so-how-about-some-real-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>So, how about some real code?</h2>
+<a id="quick-overview-of-tasks" class="anchor" href="#quick-overview-of-tasks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick overview of "Tasks"</h2>
 
-<p>Yep, real code time. Going off the example above, we need to make 1 new "Task", and one "Controller" class. Here are those 2 classes, well documented:</p>
+<p>Probably the single biggest difference in scripts is the "Task" system. Basically, instead of one large Script that contains a bunch of if statements/states/etc, we split it up like a "node" system into seperate classes. The improvement the Tasks have is they have access to the OSBot API and lemons API just like a normal Script would.</p>
 
 <h3>
-<a id="goblinkillerjava" class="anchor" href="#goblinkillerjava" aria-hidden="true"><span class="octicon octicon-link"></span></a>GoblinKiller.java</h3>
+<a id="making-a-simple-task" class="anchor" href="#making-a-simple-task" aria-hidden="true"><span class="octicon octicon-link"></span></a>Making a simple Task</h3>
+
+<p>So, lets say you want to make a simple task. Lets get real generic and say were chopping down a Tree. So, we make a new <code>AbstractTask</code> "ChopTreeTask":</p>
+
+<div class="highlight highlight-java"><pre><span class="pl-k">import</span> <span class="pl-smi">lemons.api.script.entities.RS2Object</span>;
+<span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.templates.AbstractTask</span>;
+
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">ChopDownTreeTask</span> <span class="pl-k">extends</span> <span class="pl-e">AbstractTask</span> {
+
+    <span class="pl-k">private</span> <span class="pl-k">String</span>[] names;
+
+    <span class="pl-k">public</span> <span class="pl-en">ChopDownTreeTask</span>(<span class="pl-smi">String</span>... <span class="pl-v">treeTypes</span>) {
+        <span class="pl-c">// OSBot and lemons API is not available</span>
+        names <span class="pl-k">=</span> treeTypes;
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onStart</span>() {
+        <span class="pl-v">super</span><span class="pl-k">.</span>onStart();
+
+        <span class="pl-c">// Ran when the Task is added, used to initialize the script</span>
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onTaskStart</span>() {
+        <span class="pl-c">// Task is now active, init if needed</span>
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onTaskFinish</span>() {
+        <span class="pl-c">// Task is no longer active, clean up</span>
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">run</span>() {
+        <span class="pl-c">// Equal to "onLoop" but with no return</span>
+        <span class="pl-k">if</span> (getTree()<span class="pl-k">.</span>interact(<span class="pl-s"><span class="pl-pds">"</span>Chop down<span class="pl-pds">"</span></span>)) {
+            sleepMoving(<span class="pl-c1">5000</span>);
+            sleep(<span class="pl-c1">2000</span>, () <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-k">!</span>myPlayer()<span class="pl-k">.</span>isAnimating());
+        }
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">boolean</span> <span class="pl-en">isActive</span>() {
+        <span class="pl-c">// Checks if the task can be ran</span>
+        <span class="pl-k">return</span> <span class="pl-k">!</span>getInventory()<span class="pl-k">.</span>isFull()
+                <span class="pl-k">&amp;&amp;</span> getTree() <span class="pl-k">!=</span> <span class="pl-c1">null</span>
+                <span class="pl-k">&amp;&amp;</span> <span class="pl-k">!</span>myPlayer()<span class="pl-k">.</span>isAnimating();
+    }
+
+    <span class="pl-k">public</span> <span class="pl-smi">RS2Object</span> <span class="pl-en">getTree</span>() {
+        <span class="pl-c">// Note the EntityAPI here is different, this is to add</span>
+        <span class="pl-c">// additional helpers to the object and to replace lost</span>
+        <span class="pl-c">// functionality from filters.</span>
+        <span class="pl-k">return</span> getObjects()<span class="pl-k">.</span>closest(o <span class="pl-k">-</span><span class="pl-k">&gt;</span> o<span class="pl-k">.</span>hasName(names));
+    }
+
+}</pre></div>
+
+<h3>
+<a id="building-the-script" class="anchor" href="#building-the-script" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building the Script</h3>
+
+<p>But, that is only one part of the puzzle right? Well, that is the point. Now, wherever you need to chop down a tree, you can simply add that Task. Lets say we want to take that <code>ChopTreeTask</code>, and make it into a power cutter. Simple, we just make a "Controller" (either a <code>ComplexTask</code> or ultimately a <code>TaskScript</code>) to run it. So, we'll make a new <code>TaskScript</code> for this example:</p>
+
+<div class="highlight highlight-java"><pre><span class="pl-k">import</span> <span class="pl-smi">org.osbot.rs07.api.ui.Skill</span>;
+
+<span class="pl-k">import</span> <span class="pl-smi">lemons.api.script.TaskScript</span>;
+
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">TreeChopper</span> <span class="pl-k">extends</span> <span class="pl-e">TaskScript</span> {
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onStart</span>() {
+        <span class="pl-v">super</span><span class="pl-k">.</span>onStart();
+
+        <span class="pl-c">// Set the tasks in the order you want them executed</span>
+
+        <span class="pl-c">// We want to drop logs, luckily the API already contains this task</span>
+        <span class="pl-c">// Feel free to make your own though!</span>
+        addTask(<span class="pl-k">new</span> <span class="pl-smi">DropperTask</span>()
+            .drop(<span class="pl-s"><span class="pl-pds">"</span>Logs<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>Oak logs<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>Willow logs<span class="pl-pds">"</span></span>));
+
+        <span class="pl-c">// Lets add willow tree chopping</span>
+        addTask(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> lvl() <span class="pl-k">&gt;=</span> <span class="pl-c1">30</span>, <span class="pl-k">new</span> <span class="pl-smi">ChopDownTreeTask</span>(<span class="pl-s"><span class="pl-pds">"</span>Willow tree<span class="pl-pds">"</span></span>));
+        <span class="pl-c">// The lambda confuse you? Heres a more syntax'ed version</span>
+        addTask(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
+            <span class="pl-k">return</span> lvl() <span class="pl-k">&gt;=</span> <span class="pl-c1">15</span>;
+        }, <span class="pl-k">new</span> <span class="pl-smi">ChopDownTreeTask</span>(<span class="pl-s"><span class="pl-pds">"</span>Oak tree<span class="pl-pds">"</span></span>));
+        <span class="pl-c">// For more info, google "Java Lambda"</span>
+        addTask(<span class="pl-k">new</span> <span class="pl-smi">ChopDownTreeTask</span>(<span class="pl-s"><span class="pl-pds">"</span>Tree<span class="pl-pds">"</span></span>));
+    }
+
+    <span class="pl-k">private</span> <span class="pl-k">int</span> <span class="pl-en">lvl</span>() {
+        <span class="pl-k">return</span> getSkills()<span class="pl-k">.</span>getStatic(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>WOODCUTTING</span>);
+    }
+
+}</pre></div>
+
+<p>Now, we have a script that could run (it is missing a <code>ScriptManifest</code> though!). So, wheres the loop? Well, remember we moved all the "Script" stuff to the Task system, specifically <code>AbstractTask</code>. So, <code>TaskScript.addTask</code> simply adds a new Task to the queue. The queue is then ran in order every loop, top to bottom. This will behave similar to a script that checks states at the start of every loop, or the dreaded <code>if {} else ...</code> stack. This example also laminates how setting up parameters can make the Task reusable for multiple purposes, though this is a fairly simple example.</p>
+
+<h3>
+<a id="adding-a-little-lemon" class="anchor" href="#adding-a-little-lemon" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding a little lemon</h3>
+
+<p>So, you can chop wood and drop it, but we want more. So, lets put the API to use and add equipment handling, banking, and walking back to the area.</p>
 
 <div class="highlight highlight-java"><pre><span class="pl-k">import</span> <span class="pl-smi">org.osbot.rs07.api.map.Position</span>;
 <span class="pl-k">import</span> <span class="pl-smi">org.osbot.rs07.api.ui.EquipmentSlot</span>;
+<span class="pl-k">import</span> <span class="pl-smi">org.osbot.rs07.api.ui.Skill</span>;
 
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.script.TaskScript</span>;
-<span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.PickupTask</span>;
+<span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.DropperTask</span>;
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.WalkingTask</span>;
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.banking.EquipmentReq</span>;
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.banking.EquipmentReqTask</span>;
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.walking.map.Zone</span>;
 
-<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">GoblinKiller</span> <span class="pl-k">extends</span> <span class="pl-e">TaskScript</span> {
 
-    <span class="pl-c">// NOTE: You can NOT set variables like this, as the OSBot API is not available yet</span>
-    <span class="pl-k">public</span> <span class="pl-k">boolean</span> willNotWork <span class="pl-k">=</span> getInventory()<span class="pl-k">.</span>contains(<span class="pl-s"><span class="pl-pds">"</span>nothing<span class="pl-pds">"</span></span>);
-
-    <span class="pl-k">public</span> <span class="pl-en">GoblinKiller</span>() {
-        <span class="pl-c">// Note you can NOT use the OSBot API here either</span>
-    }
-
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">TreeChopper</span> <span class="pl-k">extends</span> <span class="pl-e">TaskScript</span> {
 
     <span class="pl-k">@Override</span>
     <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onStart</span>() {
-        <span class="pl-c">// OSBot API is available, do stuff!</span>
-
-        <span class="pl-c">// Make sure we run this, this initializes the lemons API</span>
         <span class="pl-v">super</span><span class="pl-k">.</span>onStart();
 
-        <span class="pl-c">// So, lets setup equipment handling</span>
-        <span class="pl-c">// Note this is also a BankTask, so no need to add one of those!</span>
+        <span class="pl-c">// Lets add our EquipmentReqTask, which also removes the need</span>
+        <span class="pl-c">// (most of the time) for a BankTask. This also have all the</span>
+        <span class="pl-c">// API of a regular BankTask.</span>
+        <span class="pl-c">// Note the BankTask by default deposits everything, and the</span>
+        <span class="pl-c">// EquipmentReqTask won't deposit the equipment it needs at</span>
+        <span class="pl-c">// that time.</span>
         addTask(<span class="pl-k">new</span> <span class="pl-smi">EquipmentReqTask</span>()
-            <span class="pl-c">// So, lets add the weapon requirement of "Bronze sword"</span>
-            .addReq(<span class="pl-smi">EquipmentSlot</span><span class="pl-c1"><span class="pl-k">.</span>WEAPON</span>,
-                <span class="pl-c">// First false = not required, second = don't go bank</span>
-                <span class="pl-c">// for immediately</span>
-                <span class="pl-k">new</span> <span class="pl-smi">EquipmentReq</span>(<span class="pl-c1">false</span>, <span class="pl-c1">false</span>)
-                    <span class="pl-c">// Finally, add the Bronze sword to this req,</span>
-                    <span class="pl-c">// note you can chain addItem for multiple items.</span>
-                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Bronze sword<span class="pl-pds">"</span></span>))
-            <span class="pl-c">// Same thing, but for shields</span>
-            .addReq(<span class="pl-smi">EquipmentSlot</span><span class="pl-c1"><span class="pl-k">.</span>SHIELD</span>,
-                <span class="pl-k">new</span> <span class="pl-smi">EquipmentReq</span>(<span class="pl-c1">false</span>, <span class="pl-c1">false</span>)
-                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Wooden shield<span class="pl-pds">"</span></span>))
-        );
+                <span class="pl-c">// Axe goes in the WEAPON slot, and setup the EquipmentReq</span>
+                .addReq(<span class="pl-smi">EquipmentSlot</span><span class="pl-c1"><span class="pl-k">.</span>WEAPON</span>, <span class="pl-k">new</span> <span class="pl-smi">EquipmentReq</span>(<span class="pl-c1">true</span>, <span class="pl-c1">false</span>)
+                    <span class="pl-c">// Lets add the Dragon axe</span>
+                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Dragon axe<span class="pl-pds">"</span></span>)
+                        <span class="pl-c">// We can use it for woodcutting at lvl 60</span>
+                        .setUseLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>WOODCUTTING</span>, <span class="pl-c1">60</span>)
+                        <span class="pl-c">// We can equip it if we have 60 attack</span>
+                        .setEquipLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>ATTACK</span>, <span class="pl-c1">60</span>)
+                    <span class="pl-c">// And repeat for the rest</span>
+                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Rune axe<span class="pl-pds">"</span></span>)
+                        .setUseLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>WOODCUTTING</span>, <span class="pl-c1">41</span>)
+                        .setEquipLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>ATTACK</span>, <span class="pl-c1">40</span>)
+                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Adamant axe<span class="pl-pds">"</span></span>)
+                        .setUseLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>WOODCUTTING</span>, <span class="pl-c1">31</span>)
+                        .setEquipLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>ATTACK</span>, <span class="pl-c1">30</span>)
+                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Mithril axe<span class="pl-pds">"</span></span>)
+                        .setUseLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>WOODCUTTING</span>, <span class="pl-c1">21</span>)
+                        .setEquipLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>ATTACK</span>, <span class="pl-c1">20</span>)
+                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Black axe<span class="pl-pds">"</span></span>)
+                        .setUseLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>WOODCUTTING</span>, <span class="pl-c1">11</span>)
+                        .setEquipLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>ATTACK</span>, <span class="pl-c1">10</span>)
+                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Steel axe<span class="pl-pds">"</span></span>)
+                        .setUseLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>WOODCUTTING</span>, <span class="pl-c1">6</span>)
+                        .setEquipLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>ATTACK</span>, <span class="pl-c1">5</span>)
+                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Iron axe<span class="pl-pds">"</span></span>)
+                        .setUseLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>WOODCUTTING</span>, <span class="pl-c1">1</span>)
+                        .setEquipLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>ATTACK</span>, <span class="pl-c1">1</span>)
+                    .addItem(<span class="pl-s"><span class="pl-pds">"</span>Bronze axe<span class="pl-pds">"</span></span>)
+                        .setUseLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>WOODCUTTING</span>, <span class="pl-c1">1</span>)
+                        .setEquipLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>ATTACK</span>, <span class="pl-c1">1</span>)
+        ));
 
-        <span class="pl-c">// Lets add walking back to the the goblin killer area</span>
+        <span class="pl-c">// Lets walk to the zone, note that the positions are fake!</span>
+        <span class="pl-c">// Set to draynor or something, or better yet ask the user.</span>
         addTask(<span class="pl-k">new</span> <span class="pl-smi">WalkingTask</span>(
-                <span class="pl-c">// Since OSBots Areas are pretty low-level, we use custom</span>
-                <span class="pl-c">// "Zones". Note zones must be passed the script, use "this"</span>
-                <span class="pl-c">// inside "TaskScript" and getScript() elsewhere.</span>
                 <span class="pl-k">new</span> <span class="pl-smi">Zone</span>(<span class="pl-v">this</span>)
-                    .rect(<span class="pl-k">new</span> <span class="pl-smi">Position</span>(<span class="pl-c1">3242</span>, <span class="pl-c1">3222</span>, <span class="pl-c1">0</span>), <span class="pl-k">new</span> <span class="pl-smi">Position</span>(<span class="pl-c1">3268</span>, <span class="pl-c1">3270</span>, <span class="pl-c1">0</span>))));
+                    .rect(<span class="pl-k">new</span> <span class="pl-smi">Position</span>(<span class="pl-c1">1234</span>, <span class="pl-c1">1234</span>, <span class="pl-c1">0</span>), <span class="pl-k">new</span> <span class="pl-smi">Position</span>(<span class="pl-c1">1234</span>, <span class="pl-c1">1234</span>, <span class="pl-c1">0</span>))));
 
-        <span class="pl-c">// Lets add pickup task, since we want that before attacking. Note this pickup</span>
-        <span class="pl-c">// task will be pretty permissive, and will go for almost anything in the area.</span>
-
-        addTask(<span class="pl-k">new</span> <span class="pl-smi">PickupTask</span>()<span class="pl-k">.</span>addItem(<span class="pl-s"><span class="pl-pds">"</span>Coins<span class="pl-pds">"</span></span>));
-
-        <span class="pl-c">// Finally, add our "AttackGoblinTask"</span>
-        addTask(<span class="pl-k">new</span> <span class="pl-smi">AttackGoblinTask</span>());
+        <span class="pl-c">// Add a couple tree chop tasks</span>
+        addTask(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> lvl() <span class="pl-k">&gt;=</span> <span class="pl-c1">15</span>, <span class="pl-k">new</span> <span class="pl-smi">ChopDownTreeTask</span>(<span class="pl-s"><span class="pl-pds">"</span>Oak tree<span class="pl-pds">"</span></span>));
+        addTask(<span class="pl-k">new</span> <span class="pl-smi">ChopDownTreeTask</span>(<span class="pl-s"><span class="pl-pds">"</span>Tree<span class="pl-pds">"</span></span>));
     }
 
-}</pre></div>
-
-<h3>
-<a id="attackgoblintaskjava" class="anchor" href="#attackgoblintaskjava" aria-hidden="true"><span class="octicon octicon-link"></span></a>AttackGoblinTask.java</h3>
-
-<div class="highlight highlight-java"><pre><span class="pl-k">import</span> <span class="pl-smi">lemons.api.script.entities.NPC</span>;
-<span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.templates.AbstractTask</span>;
-
-<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">AttackGoblinTask</span> <span class="pl-k">extends</span> <span class="pl-e">AbstractTask</span> {
-
-    <span class="pl-c">// Define a holder for our goblin</span>
-    <span class="pl-k">private</span> <span class="pl-c1">NPC</span> gob;
-
-    <span class="pl-k">@Override</span>
-    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">run</span>() {
-        <span class="pl-c">// Get our goblin using our neat function :p</span>
-        gob <span class="pl-k">=</span> getGoblin();
-
-
-        <span class="pl-k">if</span> (gob <span class="pl-k">==</span> <span class="pl-c1">null</span>) {
-            <span class="pl-c">// Uhh oh, no goblin! Wait until we got one...</span>
-            error(<span class="pl-s"><span class="pl-pds">"</span>No goblin was detected! Sleeping...<span class="pl-pds">"</span></span>);
-            sleep(<span class="pl-c1">1000</span>, <span class="pl-c1">2000</span>);
-            <span class="pl-k">return</span>;
-        }
-
-        <span class="pl-k">if</span> (gob<span class="pl-k">.</span>interact(<span class="pl-s"><span class="pl-pds">"</span>Attack<span class="pl-pds">"</span></span>)) {
-            <span class="pl-c">// No issues attacking goblin, wait until the task isn't active anymore</span>
-            info(<span class="pl-s"><span class="pl-pds">"</span>Attacked goblin at <span class="pl-pds">"</span></span><span class="pl-k">+</span>tile(gob)<span class="pl-k">.</span>toString());
-            <span class="pl-c">// Dynamic sleeps, with awseome lambda goodness!</span>
-            sleep(<span class="pl-c1">2000</span>, () <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-k">!</span>isActive());
-        }
+    <span class="pl-k">private</span> <span class="pl-k">int</span> <span class="pl-en">lvl</span>() {
+        <span class="pl-k">return</span> getSkills()<span class="pl-k">.</span>getStatic(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>WOODCUTTING</span>);
     }
 
-    <span class="pl-k">public</span> <span class="pl-smi">NPC</span> <span class="pl-en">getGoblin</span>() {
-        <span class="pl-c">// Simple returns the closest goblin which isn't under attack</span>
-        <span class="pl-c">// This can be improved on</span>
-        <span class="pl-k">return</span> getNpcs()<span class="pl-k">.</span>closest(o <span class="pl-k">-</span><span class="pl-k">&gt;</span> o<span class="pl-k">.</span>hasName(<span class="pl-s"><span class="pl-pds">"</span>Goblin<span class="pl-pds">"</span></span>)
-                    <span class="pl-k">&amp;&amp;</span> <span class="pl-k">!</span>o<span class="pl-k">.</span>isUnderAttack());
-    }
+}
+</pre></div>
 
-    <span class="pl-k">@Override</span>
-    <span class="pl-k">public</span> <span class="pl-k">boolean</span> <span class="pl-en">isActive</span>() {
-        <span class="pl-c">// Only try and attack if we have noone to interact with,</span>
-        <span class="pl-c">// or are interacting with something thats dead</span>
-        <span class="pl-k">return</span> myPlayer()<span class="pl-k">.</span>getInteracting() <span class="pl-k">==</span> <span class="pl-c1">null</span> <span class="pl-k">||</span>
-                myPlayer()<span class="pl-k">.</span>getInteracting()<span class="pl-k">.</span>getHealth() <span class="pl-k">==</span> <span class="pl-c1">0</span>;
-    }
-
-}</pre></div>
+<p>See how easy that was? That is the power of code re-usability with the Task system. No need to re-write code. Things like banking and equipment handling are now as simple as passing some configuration to an existing Task. As such, if some bug is exposed or code needs updating, its much simpler since the code is only written once, saving time on maintaining your Scripts.</p>
 
 <h2>
-<a id="so-wheres-the-documentation" class="anchor" href="#so-wheres-the-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>So, wheres the documentation?</h2>
+<a id="how-do-i-get-started" class="anchor" href="#how-do-i-get-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>How do I get started?</h2>
 
-<p>That will be coming soon ^^ If you need help in the mean time, contact me using the section above (has my Skype/Steam messanger handles)</p>
+<p>Just clone the git into the "lemons/api" folder in your projects "src" folder.</p>
       </section>
 
     </div>
