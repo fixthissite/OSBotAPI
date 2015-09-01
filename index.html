@@ -61,7 +61,7 @@
 
 <p>Steam/OSBot: dudeami</p>
 
-<p>Feel free to ask me anything you want, anytime, for any reason. If I don't answer, its probably because I don't sit at the computer all day :p I'll get with you ASAP though!</p>
+<p>Feel free to ask me anything you want, anytime, for any reason. If I don't answer, it's probably because I don't sit at the computer all day :p. I'll get with you ASAP though!</p>
 
 <p>Please leave some info so I know why I want to add you, thanks!</p>
 
@@ -78,7 +78,7 @@
 <h3>
 <a id="making-a-simple-task" class="anchor" href="#making-a-simple-task" aria-hidden="true"><span class="octicon octicon-link"></span></a>Making a simple Task</h3>
 
-<p>So, lets say you want to make a simple task. Lets get real generic and say were chopping down a Tree. So, we make a new <code>AbstractTask</code> "ChopTreeTask":</p>
+<p>So, let's say you want to make a simple task. Let's get real generic and say were chopping down a Tree. So, we make a new <code>AbstractTask</code> "ChopTreeTask":</p>
 
 <div class="highlight highlight-java"><pre><span class="pl-k">import</span> <span class="pl-smi">lemons.api.script.entities.RS2Object</span>;
 <span class="pl-k">import</span> <span class="pl-smi">lemons.api.tasks.templates.AbstractTask</span>;
@@ -138,7 +138,7 @@
 <h3>
 <a id="building-the-script" class="anchor" href="#building-the-script" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building the Script</h3>
 
-<p>But, that is only one part of the puzzle right? Well, that is the point. Now, wherever you need to chop down a tree, you can simply add that Task. Lets say we want to take that <code>ChopTreeTask</code>, and make it into a power cutter. Simple, we just make a "Controller" (either a <code>ComplexTask</code> or ultimately a <code>TaskScript</code>) to run it. So, we'll make a new <code>TaskScript</code> for this example:</p>
+<p>But, that is only one part of the puzzle right? Well, that is the point. Now, wherever you need to chop down a tree, you can simply add that Task. Let's say we want to take that <code>ChopTreeTask</code>, and make it into a power cutter. Simple, we just make a "Controller" (either a <code>ComplexTask</code> or ultimately a <code>TaskScript</code>) to run it. So, we'll make a new <code>TaskScript</code> for this example:</p>
 
 <div class="highlight highlight-java"><pre><span class="pl-k">import</span> <span class="pl-smi">org.osbot.rs07.api.ui.Skill</span>;
 
@@ -157,7 +157,7 @@
         addTask(<span class="pl-k">new</span> <span class="pl-smi">DropperTask</span>()
             .drop(<span class="pl-s"><span class="pl-pds">"</span>Logs<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>Oak logs<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>Willow logs<span class="pl-pds">"</span></span>));
 
-        <span class="pl-c">// Lets add willow tree chopping</span>
+        <span class="pl-c">// Let's add willow tree chopping</span>
         addTask(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> lvl() <span class="pl-k">&gt;=</span> <span class="pl-c1">30</span>, <span class="pl-k">new</span> <span class="pl-smi">ChopDownTreeTask</span>(<span class="pl-s"><span class="pl-pds">"</span>Willow tree<span class="pl-pds">"</span></span>));
         <span class="pl-c">// The lambda confuse you? Heres a more syntax'ed version</span>
         addTask(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
@@ -178,7 +178,7 @@
 <h3>
 <a id="adding-a-little-lemon" class="anchor" href="#adding-a-little-lemon" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding a little lemon</h3>
 
-<p>So, you can chop wood and drop it, but we want more. So, lets put the API to use and add equipment handling, banking, and walking back to the area.</p>
+<p>So, you can chop wood and drop it, but we want more. So, let's put the API to use and add equipment handling, banking, and walking back to the area.</p>
 
 <div class="highlight highlight-java"><pre><span class="pl-k">import</span> <span class="pl-smi">org.osbot.rs07.api.map.Position</span>;
 <span class="pl-k">import</span> <span class="pl-smi">org.osbot.rs07.api.ui.EquipmentSlot</span>;
@@ -198,7 +198,7 @@
     <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onStart</span>() {
         <span class="pl-v">super</span><span class="pl-k">.</span>onStart();
 
-        <span class="pl-c">// Lets add our EquipmentReqTask, which also removes the need</span>
+        <span class="pl-c">// Let's add our EquipmentReqTask, which also removes the need</span>
         <span class="pl-c">// (most of the time) for a BankTask. This also have all the</span>
         <span class="pl-c">// API of a regular BankTask.</span>
         <span class="pl-c">// Note the BankTask by default deposits everything, and the</span>
@@ -207,7 +207,7 @@
         addTask(<span class="pl-k">new</span> <span class="pl-smi">EquipmentReqTask</span>()
                 <span class="pl-c">// Axe goes in the WEAPON slot, and setup the EquipmentReq</span>
                 .addReq(<span class="pl-smi">EquipmentSlot</span><span class="pl-c1"><span class="pl-k">.</span>WEAPON</span>, <span class="pl-k">new</span> <span class="pl-smi">EquipmentReq</span>(<span class="pl-c1">true</span>, <span class="pl-c1">false</span>)
-                    <span class="pl-c">// Lets add the Dragon axe</span>
+                    <span class="pl-c">// Let's add the Dragon axe</span>
                     .addItem(<span class="pl-s"><span class="pl-pds">"</span>Dragon axe<span class="pl-pds">"</span></span>)
                         <span class="pl-c">// We can use it for woodcutting at lvl 60</span>
                         .setUseLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>WOODCUTTING</span>, <span class="pl-c1">60</span>)
@@ -237,7 +237,7 @@
                         .setEquipLevel(<span class="pl-smi">Skill</span><span class="pl-c1"><span class="pl-k">.</span>ATTACK</span>, <span class="pl-c1">1</span>)
         ));
 
-        <span class="pl-c">// Lets walk to the zone, note that the positions are fake!</span>
+        <span class="pl-c">// Let's walk to the zone, note that the positions are fake!</span>
         <span class="pl-c">// Set to draynor or something, or better yet ask the user.</span>
         addTask(<span class="pl-k">new</span> <span class="pl-smi">WalkingTask</span>(
                 <span class="pl-k">new</span> <span class="pl-smi">Zone</span>(<span class="pl-v">this</span>)
