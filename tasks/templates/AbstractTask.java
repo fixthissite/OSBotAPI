@@ -11,8 +11,6 @@ import lemons.api.walking.map.Tile;
 import org.osbot.rs07.api.map.Position;
 import org.osbot.rs07.api.ui.Message;
 
-import com.thoughtworks.xstream.io.path.Path;
-
 public abstract class AbstractTask extends TaskScriptEmulator<TaskScript> {
 	
 	public abstract void run();
