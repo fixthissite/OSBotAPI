@@ -139,7 +139,11 @@ public class Interact extends TaskScriptEmulator<TaskScript> {
     }
 		
 	private boolean hover(Tile t) {
-		if (!hover(shrinkArea(new Area(t.pos().getPolygon(getBot())), 7))) {
+		return hover(t, 7);
+	}
+	
+	private boolean hover(Tile t, int shrink) {
+		if (!hover(shrinkArea(new Area(t.pos().getPolygon(getBot())), shrink))) {
 			try {
 				getMouse().moveRandomly();
 				warning("Randomly moving mouse as hover failed...");
@@ -212,7 +216,11 @@ public class Interact extends TaskScriptEmulator<TaskScript> {
 	 * * * * * * * * * * * * * * * * * * * * */
 	
 	public boolean tile(Tile t, String... actions) {
-		if (!hover(t)) {
+		return tile(t, 7, actions);
+	}
+	
+	public boolean tile(Tile t, int padding, String... actions) {
+		if (!hover(t, padding)) {
 			debug("Failed to hover tile "+t.toString());
 			return false;
 		}

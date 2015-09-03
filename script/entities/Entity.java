@@ -92,6 +92,13 @@ public class Entity extends TaskScriptEmulator<TaskScript> implements org.osbot.
 
 	@Override
 	public boolean hasAction(String... a) {
+		if (a == null || a.length == 0) {
+			for (String o : getActions()) {
+				if (o != null && !o.equals("null"))
+					return true;
+			}
+			return false;
+		}
 		return entity.hasAction(a);
 	}
 
