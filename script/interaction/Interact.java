@@ -31,19 +31,15 @@ import org.osbot.rs07.event.CameraPitchEvent;
 import org.osbot.rs07.event.CameraYawEvent;
 
 public class Interact extends TaskScriptEmulator<TaskScript> {
-	
-	private static final int INTERACT_BUFFER = 2;
 
 	public static final float RADIUS = 4;
 
-	private static final int INTERACT_SIZE_MIN = 4;
-
-	private static final int INTERACT_DISTANCE = 6;
+	private static final int INTERACT_SIZE_MIN = 4,
+						INTERACT_DISTANCE = 6,
+						INTERACT_BUFFER = 2;
 	private boolean firstAction;
 
 	private int index;
-
-	private WallObject wall;
 
 	private LocalPath preparePath;
 
@@ -58,9 +54,7 @@ public class Interact extends TaskScriptEmulator<TaskScript> {
 	//private boolean useSelf = false;
 
 	private Rectangle tmpBounds;
-
-	private Area tmpArea2;
-
+	
 	private Color c;
 
 	private boolean isObstacle;
@@ -139,7 +133,7 @@ public class Interact extends TaskScriptEmulator<TaskScript> {
     }
 		
 	private boolean hover(Tile t) {
-		return hover(t, 7, true);
+		return hover(t, INTERACT_BUFFER, true);
 	}
 		
 	private boolean hover(Tile t, int shrink) {
@@ -147,7 +141,7 @@ public class Interact extends TaskScriptEmulator<TaskScript> {
 	}
 	
 	private boolean hover(Tile t, int shrink, boolean saveArea) {
-		Area area = shrinkArea(new Area(t.pos().getPolygon(getBot())), shrink);
+		Area area = getArea(t, true, saveArea);
 		if (saveArea) {
 			cleared = true;
 			processedArea = area;
@@ -225,11 +219,11 @@ public class Interact extends TaskScriptEmulator<TaskScript> {
 	 * * * * * * * * * * * * * * * * * * * * */
 	
 	public boolean tile(Tile t, String... actions) {
-		return tile(t, 7, actions);
+		return tile(t, INTERACT_BUFFER, actions);
 	}
 	
-	public boolean tile(Tile t, int padding, String... actions) {
-		if (!hover(t, padding)) {
+	public boolean tile(Tile t, int shrink, String... actions) {
+		if (!hover(t, shrink)) {
 			debug("Failed to hover tile "+t.toString());
 			return false;
 		}
@@ -409,7 +403,24 @@ public class Interact extends TaskScriptEmulator<TaskScript> {
 	 * * * * * * * * * * * * * * * * * * * * */
 
 	public Area getArea(Entity entity, boolean correct, boolean saveArea) {
-		Area area = getAreaPriv(entity, correct, saveArea);
+		return getArea(entity, correct, INTERACT_BUFFER, saveArea);
+	}
+
+	public Area getArea(Entity entity, boolean correct, int shrink, boolean saveArea) {
+		Area area = getEntityArea(entity, correct, shrink, saveArea);
+		if (saveArea) {
+			cleared = true;
+			processedArea = area;
+		}
+		return area;
+	}
+	
+	public Area getArea(Tile tile, boolean correct, boolean saveArea) {
+		return getArea(tile, correct, INTERACT_BUFFER, saveArea);
+	}
+	
+	public Area getArea(Tile tile, boolean correct, int shrink, boolean saveArea) {
+		Area area = getTileArea(tile, correct, shrink, saveArea);
 		if (saveArea) {
 			cleared = true;
 			processedArea = area;
@@ -422,43 +433,71 @@ public class Interact extends TaskScriptEmulator<TaskScript> {
 				entity.getGridX(), entity.getGridY(), myPlayer().getZ(), entity.getModel());
 	}
 	
-	private Area getAreaPriv(Entity entity, boolean correct, boolean saveArea) {
-		// Get a fresh copy of this entity
-		if (entity == null || !entity.exists()) {
+	private Area getTileArea(Tile tile, boolean correct, int shrink, boolean saveArea) {
+		if (tile == null)
 			return null;
-		}
-		//
-		tmpArea2 = getModelArea(entity);
-		if (saveArea)
-			rawArea = (Area) tmpArea2.clone();
-		if (tmpArea2 == null || tmpArea2.isEmpty())
-			tmpArea2 = getModelArea(entity);
 		
-		if (tmpArea2 == null || tmpArea2.isEmpty()) {
+		Area area = new Area(tile.pos().getPolygon(getBot()));
+		
+		if (saveArea)
+			rawArea = (Area) area.clone();
+		
+		if (correct) {
+			area = predictPlayerArea(area);
+			if (saveArea) 
+				playerArea = (Area) area.clone();
+		}
+		
+		area = shrinkArea(area, shrink);
+		
+		if (saveArea) 
+			processedArea = (Area) area.clone();
+		
+		return area;
+	}
+	
+	private Area getEntityArea(Entity entity, boolean correct, int shrink, boolean saveArea) {
+		if (entity == null || !entity.exists())
 			return null;
+		
+		Area area = getModelArea(entity);
+		
+		if (saveArea)
+			rawArea = (Area) area.clone();
+		
+		if (correct) {
+			area = predictPlayerArea(area);
+			if (saveArea) 
+				playerArea = (Area) area.clone();
+			area = predictEntityArea(entity, area);
+			if (saveArea) 
+				npcArea = (Area) area.clone();
 		}
-		playerArea = null;
-		npcArea = null;
-		if (!correct) {
-			return shrinkArea(tmpArea2);
-		}
-		if (myPlayer().isMoving()) {
-			int[] dir = getMovementOffset(myPlayer());
-			
-			tmpArea2 = movementOffset(myPlayer(), myLocation().translate(dir[0] * -1, dir[1] * -1));
-		}
-		playerArea = (Area) tmpArea2.clone();
+		
+		area = shrinkArea(area, shrink);
+		
+		if (saveArea) 
+			processedArea = (Area) area.clone();
+		
+		return area;
+	}
+	
+	private Area predictEntityArea(Entity entity, Area area) {
 		if (entity instanceof NPC && ((NPC) entity).isMoving()) {
 			int[] dir = getMovementOffset((NPC) entity);
 			
-			tmpArea2 = movementOffset(entity, getWalker().tile(entity).translate(dir[0], dir[1]));
+			area = movementOffset(entity, area, getWalker().tile(entity).translate(dir[0], dir[1]));
 		}
-		npcArea = (Area) tmpArea2.clone();
-		return shrinkArea(tmpArea2);
+		return area;
 	}
 	
-	private Area shrinkArea(Area area) {
-		return shrinkArea(area, INTERACT_BUFFER);
+	private Area predictPlayerArea(Area area) {
+		if (myPlayer().isMoving()) {
+			int[] dir = getMovementOffset(myPlayer());
+			
+			area = movementOffset(myPlayer(), area, myLocation().translate(dir[0] * -1, dir[1] * -1));
+		}
+		return area;
 	}
 
 	private Area shrinkArea(Area area, int amount) {
@@ -486,7 +525,7 @@ public class Interact extends TaskScriptEmulator<TaskScript> {
 		return area;
 	}
 
-	private Area movementOffset(Entity entity, Tile lastTile) {
+	private Area movementOffset(Entity entity, Area area, Tile lastTile) {
 		Tile curTile = getWalker().tile(entity);
 		int cx = curTile.getPointOnScreen().x,
 			cy = curTile.getPointOnScreen().y,
@@ -516,7 +555,7 @@ public class Interact extends TaskScriptEmulator<TaskScript> {
 		double dx = nx - cx, dy = ny - cy;
 		
 		return new Area(AffineTransform.getTranslateInstance(dx, dy)
-				.createTransformedShape(tmpArea2));
+				.createTransformedShape(area));
 	}
 
 	@SuppressWarnings("rawtypes")
