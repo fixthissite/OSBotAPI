@@ -114,15 +114,14 @@ public class DropperTask extends AbstractTask {
 				getInteract().menuSelect("Cancel");
 			}
 			
-			item = getInventory().getItemInSlot(
-					dropPattern[index]
-							);
+			item = getInventory().getItemInSlot(dropPattern[index]);
 			
 			if (item == null || item.getName() == null)
 				continue;
 			
 			for (String s : itemNames) {
 				if (item.getName().equalsIgnoreCase(s)) {
+					// TODO: Very non-resizable friendly code lol (if ever supported)
 					debug("Item "+s+" dropped");
 					// Get a random point
 					int x = 563 + ((dropPattern[index] % 4) * 42),
@@ -136,11 +135,12 @@ public class DropperTask extends AbstractTask {
 							sleep(100);
 						sleep(0, 500);
 					}
+					dropping = getInventory().contains(itemNames.toArray(new String[itemNames.size()]));
 					return;
 				}
 			}
+			dropping = getInventory().contains(itemNames.toArray(new String[itemNames.size()]));
 		}
-		dropping = false;
 	}
 
 
