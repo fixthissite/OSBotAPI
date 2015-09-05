@@ -205,13 +205,6 @@ public class TaskScriptEmulator<TS extends TaskScript> extends ScriptEmulator<TS
 	}
 	
 	public boolean sleepAnimating(int time, int animDelay) {
-		new ConditionalSleep(1000) {
-			
-			@Override
-			public boolean condition() throws InterruptedException {
-				return false;
-			}
-		};
 		return sleepAnimating(time, animDelay, () -> true);
 	}
 	

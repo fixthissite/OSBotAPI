@@ -433,11 +433,15 @@ public class Interact extends TaskScriptEmulator<TaskScript> {
 				entity.getGridX(), entity.getGridY(), myPlayer().getZ(), entity.getModel());
 	}
 	
+	private Area getTileArea(Tile tile) {
+		return new Area(tile.pos().getPolygon(getBot()));
+	}
+	
 	private Area getTileArea(Tile tile, boolean correct, int shrink, boolean saveArea) {
 		if (tile == null)
 			return null;
 		
-		Area area = new Area(tile.pos().getPolygon(getBot()));
+		Area area = new Area(getTileArea(tile));
 		
 		if (saveArea)
 			rawArea = (Area) area.clone();

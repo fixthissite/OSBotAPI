@@ -12,7 +12,7 @@ import lemons.api.utils.Timer;
 
 public abstract class EntityAPI<T extends Entity> extends TaskScriptEmulator<TaskScript> {
 
-	private static final long REFRESH_RATE = 1000;
+	private static final long REFRESH_RATE = 100;
 	private static final boolean DEFAULT_DISTANCE_REAL = false;
 	private Timer timer;
 	private ArrayList<T> cache = new ArrayList<T>();
