@@ -26,6 +26,10 @@ public class WalkingTask extends AbstractTask {
 		if (getScript() != null && this.listener == null)
 			this.listener = new ZoneListener(getScript(), zone);
 	}
+	
+	public AbstractZone getZone() {
+		return zone;
+	}
 
 	public WalkingTask(AbstractZone a, WalkListener<Boolean, Tile> listener) {
 		this.zone = a;
@@ -88,11 +92,6 @@ public class WalkingTask extends AbstractTask {
 			return true;
 		}
 		return false;
-	}
-
-
-	public AbstractZone getZone() {
-		return zone;
 	}
 
 }

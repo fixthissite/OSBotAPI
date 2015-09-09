@@ -68,7 +68,7 @@ public class PickupTask extends ComplexTask {
 			}
 		};
 		
-		addTask(() -> pickupTask.isActive(), walkingTask);
+		addTask(() -> pickupTask.isActive() && walkingTask.getZone() != null, walkingTask);
 		addTask(pickupTask);
 	}
 

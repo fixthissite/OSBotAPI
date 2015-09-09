@@ -77,8 +77,6 @@ public class Walker extends TaskScriptEmulator<TaskScript> {
 
 	private Color startColor;
 
-	private boolean nolog = true;
-
 	private LocalPath path;
 
 	private Tile destTile;
@@ -117,10 +115,6 @@ public class Walker extends TaskScriptEmulator<TaskScript> {
 			new Trapdoor(getScript())
 		};
 	}
-	
-	public void setVerboseLog(boolean b) {
-		nolog = !b;
-	}
 
 	public void wait(Position b, WalkListener<Boolean, Tile> callable) {
 		wait(tile(b), callable);
@@ -152,13 +146,6 @@ public class Walker extends TaskScriptEmulator<TaskScript> {
 			exception(e);;
 			debug("Done waiting, exception!");
 		}
-	}
-	
-	public void waitForMovement() {
-		for (int i = 0; i < 10 && !myPlayer().isMoving(); i++)
-			sleep(100);
-		for (int i = 0; i < 100 && myPlayer().isMoving(); i++)
-			sleep(100);
 	}
 
 	public void wait(Tile loc) {
@@ -482,15 +469,6 @@ public class Walker extends TaskScriptEmulator<TaskScript> {
 		lastZLevelDiff = z;
 	}
 
-	public void log22(String message) {
-		if (nolog) return;
-		
-		//filemanager.getLogPrinter()
-		//	.println("[#"+getBot().getId()+" "+sdf.format(new Date())+"] "+message);
-		//System.out.println("[#"+getBot().getId()+" "+sdf.format(new Date())+"] "+message);
-		debug(message);
-	}
-
 	public FileManager getFileManager() {
 		return filemanager;
 	}
@@ -651,22 +629,6 @@ public class Walker extends TaskScriptEmulator<TaskScript> {
 		return end;
 	}
 
-	public boolean nearEdge() {
-		return edgeDetect > 1;
-	}
-	
-	public void edgeDetectTick() {
-		edgeDetect++;
-	}
-	
-	public void edgeDetectReset() {
-		edgeDetect  = 0;
-	}
-
-	public int getEdgeDetect() {
-		return edgeDetect;
-	}
-
 	public ArrayList<Node> nodes() {
 		if (paths == null)
 			paths = filemanager.getWeb();
@@ -704,18 +666,6 @@ public class Walker extends TaskScriptEmulator<TaskScript> {
 
 	public Obstacle[] getGlobalObstacles() {
 		return globalObstacles;
-	}
-	
-	public boolean regionContains(Entity t) {
-		return region.contains(tile(t));
-	}
-	
-	public boolean regionContains(Position t) {
-		return region.contains(tile(t));
-	}
-	
-	public boolean regionContains(Tile t) {
-		return region.contains(t);
 	}
 	
 }

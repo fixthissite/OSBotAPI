@@ -41,7 +41,7 @@ public class StorePurchaseTask extends AbstractTask {
 				walkTo(tile.get());
 			else {
 				if (interact(getNpc(), "Trade")) {
-					getWalker().waitForMovement();
+					sleepMoving();
 					sleep(1000, 1500);
 				}
 			}

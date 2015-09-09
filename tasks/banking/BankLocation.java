@@ -5,7 +5,7 @@ import lemons.api.walking.map.Tile;
 
 import org.osbot.rs07.api.map.Position;
 
-public enum BankLocation {
+public enum BankLocation { 
 	LUMBRIDGE(new Position(3208, 3220, 2)),
 	DRAYNOR(new Position(3094, 3243, 0)),
 	GRAND_EXCHANGE(new Position(3167, 3489, 0)),
