@@ -1,8 +1,5 @@
 package lemons.api.utils;
 
-/**
- * Created by Kenneth on 8/6/2014.
- */
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;

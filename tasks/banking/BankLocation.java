@@ -14,6 +14,9 @@ public enum BankLocation {
 	ARDOUGNE_EAST(new Position(2653, 3283, 0)),
 	FALADOR_EAST(new Position(2947, 3368, 0)),
 	FALADOR_WEST(new Position(3013, 3355, 0)),
+	VARROCK_WEST(new Position(3183, 3438, 0)),
+	VARROCK_EAST(new Position(3254, 3421, 0)),
+	EDGEVILLE(new Position(3094, 3494, 0)),
 	PHASMATYS(new Position(3688, 3467, 0));
 	
 	private Position p;
